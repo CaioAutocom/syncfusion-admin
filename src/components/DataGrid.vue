@@ -10,23 +10,47 @@
     </div>
 </template>
 <script setup>
-import { provide } from "vue";
+import {onMounted, provide, ref} from "vue";
 import { GridComponent as EjsGrid, ColumnDirective as EColumn, ColumnsDirective as EColumns, AggregateDirective as EAggregate, AggregatesDirective as EAggregates, Page, Sort, Filter, Group, Aggregate } from "@syncfusion/ej2-vue-grids";
-      const data = [
-          { OrderID: 10248, CustomerID: 'VINET', Freight: 32.38 },
-          { OrderID: 10249, CustomerID: 'TOMSP', Freight: 11.61 },
-          { OrderID: 10250, CustomerID: 'HANAR', Freight: 65.83 },
-          { OrderID: 10251, CustomerID: 'VICTE', Freight: 41.34 },
-          { OrderID: 10252, CustomerID: 'SUPRD', Freight: 51.3 },
-          { OrderID: 10253, CustomerID: 'HANAR', Freight: 58.17 },
-          { OrderID: 10254, CustomerID: 'CHOPS', Freight: 22.98 },
-          { OrderID: 10255, CustomerID: 'aa', Freight: 148.33 },
-          { OrderID: 10256, CustomerID: 'ff', Freight: 13.97 },
-            { OrderID: 10253, CustomerID: 'gg', Freight: 58.17 },
-          { OrderID: 10254, CustomerID: 'gg', Freight: 22.98 },
-          { OrderID: 10255, CustomerID: 'gg', Freight: 148.33 },
-          { OrderID: 10256, CustomerID: 'gg', Freight: 13.97 }
-      ];
+
+import { getAuthentication } from "../services/authentication/authentication";
+import { getPersons } from '../services/persons/persons'
+
+const request = {
+  email: "eduprog@gmail.com",
+  password: "123Pa$$word!",
+  tenantId: "eduprog",
+};
+  const data = ref([]);
+
+onMounted(async () => {
+  const t = auth();
+  getAllPerson(t);
+});
+
+async function auth(){
+  try {
+    const authService = getAuthentication();
+    const response = await authService.autenticarOUsuário(request);
+
+    console.log(response);
+    // if (response){
+    //   localStorage.setItem("SyncToken", response.data.token);
+    // }
+  } catch (error) {
+    console.log("aaaaaa" + error);
+  }
+}
+async function getAllPerson(token){
+  try {
+
+    const personService = getPersons();
+    data = personService.response;
+  } catch (error) {
+     console.log("bbbbb" + error);
+  }
+}
+    
       const pageSettings = { pageSize: 5 };
       const footerSum = ()=> {
         return  { template : Vue.component('sumTemplate', {
