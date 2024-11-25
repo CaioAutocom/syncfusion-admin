@@ -24,7 +24,6 @@ import type {
   UserTenantCreateUpdateRequest
 } from '../../interfaces/api'
 import { customInstance } from '../../api/api-interceptor';
-import type { BodyType } from '../../api/api-interceptor';
 
 
 type SecondParameter<T extends (...args: any) => any> = Parameters<T>[1];
@@ -35,7 +34,7 @@ type SecondParameter<T extends (...args: any) => any> = Parameters<T>[1];
  * @summary Loga usuário fornecendo lista de tenants que usuário tem acesso.
  */
 const loginUsuário = (
-    userLoginRequest: BodyType<UserLoginRequest>,
+    userLoginRequest: UserLoginRequest,
  options?: SecondParameter<typeof customInstance>,) => {
       return customInstance<UserLoginResponse>(
       {url: `/api/user/login`, method: 'POST',
@@ -72,7 +71,7 @@ const confirmarTelefone = (
  * @summary Solicitação de redefinição de senha.
  */
 const esqueciMinhaSenha = (
-    forgotPasswordRequest: BodyType<ForgotPasswordRequest>,
+    forgotPasswordRequest: ForgotPasswordRequest,
  options?: SecondParameter<typeof customInstance>,) => {
       return customInstance<string>(
       {url: `/api/user/forgot-password`, method: 'POST',
@@ -85,7 +84,7 @@ const esqueciMinhaSenha = (
  * @summary Redefinição de senha.
  */
 const redefinirSenha = (
-    resetPasswordRequest: BodyType<ResetPasswordRequest>,
+    resetPasswordRequest: ResetPasswordRequest,
  options?: SecondParameter<typeof customInstance>,) => {
       return customInstance<string>(
       {url: `/api/user/reset-password`, method: 'POST',
@@ -134,7 +133,7 @@ const obterListaDePerfis = (
  * @summary Cria um novo usuário.
  */
 const criarUsuário = (
-    createUserRequest: BodyType<CreateUserRequest>,
+    createUserRequest: CreateUserRequest,
  options?: SecondParameter<typeof customInstance>,) => {
       return customInstance<string>(
       {url: `/api/user/create`, method: 'POST',
@@ -147,7 +146,7 @@ const criarUsuário = (
  * @summary Cria um novo usuário, na api identidade e na base do tenant.
  */
 const criarUsuárioNoTenant = (
-    createUserRequest: BodyType<CreateUserRequest>,
+    createUserRequest: CreateUserRequest,
  options?: SecondParameter<typeof customInstance>,) => {
       return customInstance<string>(
       {url: `/api/user/create-in-tenant`, method: 'POST',
@@ -172,7 +171,7 @@ const obterPermissõesDoUsuárioPorId = (
  * @summary Ativa ou desativa um usuário.
  */
 const alterarStatusDoUsuário = (
-    toggleUserStatusRequest: BodyType<ToggleUserStatusRequest>,
+    toggleUserStatusRequest: ToggleUserStatusRequest,
     params: AlterarStatusDoUsuárioParams,
  options?: SecondParameter<typeof customInstance>,) => {
       return customInstance<string>(
@@ -187,7 +186,7 @@ const alterarStatusDoUsuário = (
  * @summary Cria um usuário para os tenants especificados.
  */
 const criarUsuárioParaTenant = (
-    userTenantCreateUpdateRequest: BodyType<UserTenantCreateUpdateRequest>,
+    userTenantCreateUpdateRequest: UserTenantCreateUpdateRequest,
  options?: SecondParameter<typeof customInstance>,) => {
       return customInstance<string>(
       {url: `/api/user/create-user-tenant`, method: 'POST',
@@ -200,7 +199,7 @@ const criarUsuárioParaTenant = (
  * @summary Atualiza um usuário para os tenants especificados.
  */
 const atualizarUsuárioParaTenant = (
-    userTenantCreateUpdateRequest: BodyType<UserTenantCreateUpdateRequest>,
+    userTenantCreateUpdateRequest: UserTenantCreateUpdateRequest,
     params: AtualizarUsuárioParaTenantParams,
  options?: SecondParameter<typeof customInstance>,) => {
       return customInstance<string>(

@@ -11,7 +11,7 @@ export default defineConfig({
             override: {
                 mutator: {
                   path: './src/api/api-interceptor.ts',
-                  name: 'setupApi',
+                  name: 'customInstance',
                 },
               },
         },

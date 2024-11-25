@@ -16,7 +16,6 @@ import type {
   UpdatePersonRequest
 } from '../../interfaces/api'
 import { customInstance } from '../../api/api-interceptor';
-import type { BodyType } from '../../api/api-interceptor';
 
 
 type SecondParameter<T extends (...args: any) => any> = Parameters<T>[1];
@@ -27,7 +26,7 @@ type SecondParameter<T extends (...args: any) => any> = Parameters<T>[1];
  * @summary Cria uma nova pessoa.
  */
 const criarPessoa = (
-    createPersonRequest: BodyType<CreatePersonRequest>,
+    createPersonRequest: CreatePersonRequest,
  options?: SecondParameter<typeof customInstance>,) => {
       return customInstance<string>(
       {url: `/api/person/create`, method: 'POST',
@@ -88,7 +87,7 @@ const listarPessoas = (
  * @summary Atualiza dados da pessoa.
  */
 const atualizarPessoa = (
-    updatePersonRequest: BodyType<UpdatePersonRequest>,
+    updatePersonRequest: UpdatePersonRequest,
     params: AtualizarPessoaParams,
  options?: SecondParameter<typeof customInstance>,) => {
       return customInstance<void>(

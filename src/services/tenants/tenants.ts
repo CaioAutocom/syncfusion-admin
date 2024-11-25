@@ -17,7 +17,6 @@ import type {
   TenantStrConnResponse
 } from '../../interfaces/api'
 import { customInstance } from '../../api/api-interceptor';
-import type { BodyType } from '../../api/api-interceptor';
 
 
 type SecondParameter<T extends (...args: any) => any> = Parameters<T>[1];
@@ -75,7 +74,7 @@ const obterTodosOsGruposDeTenants = (
  * @summary Cria um novo tenant.
  */
 const criarTenant = (
-    createTenantRequest: BodyType<CreateTenantRequest>,
+    createTenantRequest: CreateTenantRequest,
  options?: SecondParameter<typeof customInstance>,) => {
       return customInstance<string>(
       {url: `/api/tenant/create`, method: 'POST',

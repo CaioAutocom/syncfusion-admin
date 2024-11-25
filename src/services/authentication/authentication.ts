@@ -9,7 +9,6 @@ import type {
   TokenResponse
 } from '../../interfaces/api'
 import { customInstance } from '../../api/api-interceptor';
-import type { BodyType } from '../../api/api-interceptor';
 
 
 type SecondParameter<T extends (...args: any) => any> = Parameters<T>[1];
@@ -20,7 +19,7 @@ type SecondParameter<T extends (...args: any) => any> = Parameters<T>[1];
  * @summary Realiza autenticação do usuário com base nas credenciais fornecidas
  */
 const autenticarOUsuário = (
-    createAccessTokenRequest: BodyType<CreateAccessTokenRequest>,
+    createAccessTokenRequest: CreateAccessTokenRequest,
  options?: SecondParameter<typeof customInstance>,) => {
       return customInstance<TokenResponse>(
       {url: `/api/token/create`, method: 'POST',
@@ -33,7 +32,7 @@ const autenticarOUsuário = (
  * @summary Realiza autenticação do usuário com base no refresh token.
  */
 const refreshToken = (
-    refreshTokenRequest: BodyType<RefreshTokenRequest>,
+    refreshTokenRequest: RefreshTokenRequest,
  options?: SecondParameter<typeof customInstance>,) => {
       return customInstance<TokenResponse>(
       {url: `/api/token/refresh`, method: 'POST',

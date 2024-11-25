@@ -1,63 +1,43 @@
-import axios from 'axios';
+ // custom-instance.ts
+ 
+ import Axios, { AxiosRequestConfig } from 'axios';
+ 
+ export const AXIOS_INSTANCE = Axios.create({ baseURL: 'https://api.esistem.com.br:5100/' }); // use your own URL here or environment variable
+ 
 
-export default function setupApi() {
-    let baseUrl: string = 'https://api.esistem.com.br:5100';
-    const api = axios.create({
-        baseURL: baseUrl
-    });
+ AXIOS_INSTANCE.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('SyncToken'); // Obtenha o token do localStorage
+    if (token) {
+      config.headers = {
+        ...config.headers,
+        Authorization: `Bearer ${token}`, // Adiciona o token ao cabeçalho
+      };
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error); // Rejeita o erro se algo der errado
+  }
+);
 
-    api.interceptors.request.use(
-        (config) => {
-            let token;
-            token = localStorage.getItem('SyncToken');
-
-            if (token) {
-                config.headers['Authorization'] = `Bearer ${token}`;
-            }
-            return config;
-        },
-        (error) => {
-            return Promise.reject(error);
-        }
-    );
-
-    api.interceptors.response.use(
-        (response) => {
-            if (response.status === 200 || response.status === 201) {
-                //toast.add({ severity: 'success', summary: 'Sucesso', detail: 'Operação realizada com sucesso', life: 3000 });
-            }
-            return response;
-        },
-        (error) => {
-            let message = null;
-            if (axios.isCancel(error)) {
-                return Promise.reject(error);
-            }
-
-            switch (error.response?.status) {
-                case 0:
-                    message = 'A API está offline! Não será possível prosseguir.';
-                    break;
-                case 400:
-                    message = 'Houve um erro na requisição';
-                case 401:
-                    message = 'Usuário ou senha inválidos.';
-                    localStorage.removeItem('Token');
-                    sessionStorage.removeItem('Token');
-                    break;
-                case 404:
-                    message = 'Erro 404. Recurso não encontrado!';
-                    break;
-                case 415:
-                    message = 'Falha no objeto de request.';
-                    break;
-                default:
-                    message = 'Houve um erro desconhecido na requisição.';
-                    break;
-            }
-            return Promise.reject(error);
-        }
-    );
-
-    return api;
-}
+ // add a second `options` argument here if you want to pass extra options to each generated query
+ export const customInstance = <T>(
+   config: AxiosRequestConfig,
+   options?: AxiosRequestConfig,
+ ): Promise<T> => {
+   const source = Axios.CancelToken.source();
+   const promise = AXIOS_INSTANCE({
+     ...config,
+     ...options,
+     cancelToken: source.token,
+   }).then(({ data }) => data);
+ 
+   // @ts-ignore
+   promise.cancel = () => {
+     source.cancel('Query was cancelled');
+   };
+ 
+   return promise;
+ };
+ 
