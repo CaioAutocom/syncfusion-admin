@@ -1,11 +1,11 @@
 <template>
     <div id="app" class="teste">
-        <ejs-grid :dataSource="data" :allowPaging="true" :allowSorting='true' :allowFiltering='true' :allowGrouping='true' :pageSettings='pageSettings' >
+        <ejs-grid :dataSource="data" :allowPaging='true' :allowSorting='true' :allowFiltering='true' :allowGrouping='true' :pageSettings='pageSettings' >
           <e-columns>
-            <e-column field='nome' headerText='Nome' textAlign='Right' width=90></e-column>
+            <e-column field='nome' headerText='Nome' width=200></e-column>
             <e-column field='apelido' headerText='Apelido' width=120></e-column>
-            <e-column field='cpfCnpj' headerText='CPF/CNPJ' textAlign='Right' format='C2' width=90></e-column>
-            <e-column field='ativo' headerText='Status' textAlign='Right' format='C2' width=90></e-column>
+            <e-column field='cpfCnpj' headerText='CPF/CNPJ'  width=130></e-column>
+            <e-column field='ativo' headerText='Status' textAlign='Right' width=90></e-column>
           </e-columns>
         </ejs-grid>
     </div>
@@ -23,6 +23,7 @@ const request = {
   tenantId: "eduprog",
 };
   let data = ref([]);
+  let pageSettings = ref({});
 
 onMounted(async () => {
   const t = auth();
@@ -31,6 +32,9 @@ onMounted(async () => {
 
 async function auth(){
   try {
+    const loggedIn = localStorage.getItem("SyncToken") !== null;
+    if(loggedIn) return;
+
     const authService = getAuthentication();
     const response = await authService.autenticarOUsuário(request);
 
@@ -48,7 +52,7 @@ async function getAllPerson(token){
     const personService = getPersons();
     const getAllPersonRequestBuilder = {
           PageNumber:  1,
-          PageSize: 25,
+          PageSize: 1000,
           SearchTerm: '',
           SortColumn:  '',
           ReverseOrder: false,
@@ -57,6 +61,11 @@ async function getAllPerson(token){
     const response = await personService.listarPessoas(getAllPersonRequestBuilder);
     if  (response){
       data.value = response.items;
+      
+      pageSettings = {
+       
+        pageSize: response.pageSize
+      }
     }
     console.log("pessoaaa" + data);
   } catch (error) {
@@ -64,14 +73,14 @@ async function getAllPerson(token){
   }
 }
     
-      const pageSettings = { pageSize: 5 };
-      const footerSum = ()=> {
-        return  { template : Vue.component('sumTemplate', {
-            template: `<span>Sum: {{data.Sum}}</span>`,
-            data () {return { data: {data: {}}};}
-            })
-          }
+
+  const footerSum = ()=> {
+    return  { template : Vue.component('sumTemplate', {
+        template: `<span>Sum: {{data.Sum}}</span>`,
+        data () {return { data: {data: {}}};}
+        })
       }
+  }
   provide('grid',  [Page, Sort, Filter, Group, Aggregate]);
 </script>
 <style>

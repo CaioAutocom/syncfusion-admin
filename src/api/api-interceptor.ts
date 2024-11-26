@@ -2,22 +2,22 @@
  
  import Axios, { AxiosRequestConfig } from 'axios';
  
- export const AXIOS_INSTANCE = Axios.create({ baseURL: 'https://api.esistem.com.br:5100/' }); // use your own URL here or environment variable
+ export const AXIOS_INSTANCE = Axios.create({ baseURL: 'https://api.esistem.com.br:5100/' }); 
  
 
  AXIOS_INSTANCE.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('SyncToken'); // Obtenha o token do localStorage
+    const token = localStorage.getItem('SyncToken');
     if (token) {
       config.headers = {
         ...config.headers,
-        Authorization: `Bearer ${token}`, // Adiciona o token ao cabeçalho
+        Authorization: `Bearer ${token}`,
       };
     }
     return config;
   },
   (error) => {
-    return Promise.reject(error); // Rejeita o erro se algo der errado
+    return Promise.reject(error); 
   }
 );
 
