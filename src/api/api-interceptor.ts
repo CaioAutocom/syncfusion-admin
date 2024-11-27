@@ -2,10 +2,9 @@
  
  import Axios, { AxiosRequestConfig } from 'axios';
  
- export const AXIOS_INSTANCE = Axios.create({ baseURL: 'https://api.esistem.com.br:5100/' }); 
- 
+ export const apiClient = Axios.create({ baseURL: 'https://api.esistem.com.br:5100/' }); 
 
- AXIOS_INSTANCE.interceptors.request.use(
+ apiClient.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('SyncToken');
     if (token) {
@@ -16,7 +15,7 @@
     }
     return config;
   },
-  (error) => {
+  (error: any) => {
     return Promise.reject(error); 
   }
 );
@@ -27,7 +26,7 @@
    options?: AxiosRequestConfig,
  ): Promise<T> => {
    const source = Axios.CancelToken.source();
-   const promise = AXIOS_INSTANCE({
+   const promise = apiClient({
      ...config,
      ...options,
      cancelToken: source.token,

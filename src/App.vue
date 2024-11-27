@@ -1,8 +1,10 @@
 <script setup lang="ts">
+import { VueQueryDevtools } from '@tanstack/vue-query-devtools'
 import DataGrid from './components/DataGrid.vue'
 </script>
 
 <template>
+<VueQueryDevtools />
 <DataGrid />
 </template>
 <style>

@@ -16,7 +16,7 @@ import type {
   TenantDtoIPagedList,
   TenantGroupDto,
   TenantStrConnResponse
-} from '../../interfaces/api'
+} from '../../interfaces/api/Identity'
 
 export const getObterListaDeTenantsResponseMock = (overrideResponse: Partial< TenantDtoIPagedList > = {}): TenantDtoIPagedList => ({hasNext: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]), hasPrevious: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]), items: faker.helpers.arrayElement([Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({adminEmail: faker.helpers.arrayElement([faker.helpers.arrayElement([faker.string.alpha(20), null]), undefined]), connectionString: faker.helpers.arrayElement([faker.helpers.arrayElement([faker.string.alpha(20), null]), undefined]), id: faker.helpers.arrayElement([faker.helpers.arrayElement([faker.string.alpha(20), null]), undefined]), isActive: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]), issuer: faker.helpers.arrayElement([faker.helpers.arrayElement([faker.string.alpha(20), null]), undefined]), licenseId: faker.helpers.arrayElement([faker.helpers.arrayElement([faker.string.alpha(20), null]), undefined]), name: faker.helpers.arrayElement([faker.helpers.arrayElement([faker.string.alpha(20), null]), undefined]), tenantGroupId: faker.helpers.arrayElement([faker.string.uuid(), undefined]), tenantsLicense: faker.helpers.arrayElement([Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({ativo: faker.helpers.arrayElement([faker.datatype.boolean(), undefined]), demonstracao: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), funcionalidade: faker.helpers.arrayElement([faker.helpers.arrayElement([faker.string.alpha(20), null]), undefined]), id: faker.helpers.arrayElement([faker.string.uuid(), undefined]), licenseKey: faker.helpers.arrayElement([faker.helpers.arrayElement([faker.string.alpha(20), null]), undefined]), tenantId: faker.helpers.arrayElement([faker.helpers.arrayElement([faker.string.alpha(20), null]), undefined]), validoAte: faker.helpers.arrayElement([`${faker.date.past().toISOString().split('.')[0]}Z`, undefined])})), undefined]), validUpto: faker.helpers.arrayElement([`${faker.date.past().toISOString().split('.')[0]}Z`, undefined])})), undefined]), pageIndex: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), pageSize: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), totalItems: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), totalPages: faker.helpers.arrayElement([faker.number.int({min: undefined, max: undefined}), undefined]), ...overrideResponse})
 
@@ -138,4 +138,5 @@ export const getTenantsMock = () => [
   getCriarTenantMockHandler(),
   getAtivarTenantMockHandler(),
   getDesativarTenantMockHandler(),
-  getObterStringDeConexãoDoTenantMockHandler()]
+  getObterStringDeConexãoDoTenantMockHandler()
+]

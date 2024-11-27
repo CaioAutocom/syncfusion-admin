@@ -1,6 +1,18 @@
 <template>
     <div id="app" class="teste">
-        <ejs-grid :dataSource="data" :allowPaging='true' :allowSorting='true' :allowFiltering='true' :allowGrouping='true' :pageSettings='pageSettings' >
+        <h1 v-if="isAuthPending">Autenticando...</h1>
+        <h1 v-if="isLoadingFiltradas">Carregando registros...</h1>
+        <ejs-grid 
+        :dataSource="pessoasFiltradas?.items" 
+        :allowPaging='true' 
+        :allowSorting='true' 
+        :allowGrouping='true' 
+        :pageSettings='pageSettings' 
+        :actionBegin="onActionBegin"
+        @sort='onSort'
+        :toolbar='toolbarOptions'
+        :loadingIndicator='loadingIndicator'
+        height="700">
           <e-columns>
             <e-column field='nome' headerText='Nome' width=200></e-column>
             <e-column field='apelido' headerText='Apelido' width=120></e-column>
@@ -9,83 +21,96 @@
           </e-columns>
         </ejs-grid>
     </div>
+   
 </template>
-<script setup>
-import {onMounted, provide, ref} from "vue";
-import { GridComponent as EjsGrid, ColumnDirective as EColumn, ColumnsDirective as EColumns, AggregateDirective as EAggregate, AggregatesDirective as EAggregates, Page, Sort, Filter, Group, Aggregate } from "@syncfusion/ej2-vue-grids";
+<script lang="ts" setup>
+import { onMounted, provide, ref, watch } from "vue";
+import { GridComponent as EjsGrid, ColumnDirective as EColumn, ColumnsDirective as EColumns, AggregateDirective as EAggregate, AggregatesDirective as EAggregates, Page, Sort, Filter, Group, Aggregate, Toolbar, Search } from "@syncfusion/ej2-vue-grids";
+import { CreateAccessTokenRequest } from "../interfaces/api/Identity";
+import { useQuery, useQueryClient } from "@tanstack/vue-query";
+import { useAutenticarOUsuario } from "../../src/api/authentication/authentication"
+import { useListarPessoas } from "../api/persons/persons"
+import { useApiRequest } from "../composables/useApiRequest"
 
-import { getAuthentication } from "../services/authentication/authentication";
-import { getPersons } from '../services/persons/persons'
+const queryClient = useQueryClient();
 
-const request = {
+const request: CreateAccessTokenRequest = {
   email: "eduprog@gmail.com",
   password: "123Pa$$word!",
   tenantId: "eduprog",
 };
-  let data = ref([]);
-  let pageSettings = ref({});
 
-onMounted(async () => {
-  const t = auth();
-  getAllPerson(t);
+const pageNumber = ref(1)
+const pageSize = ref('500')
+const searchTerm = ref('')
+const sortColumn = ref('')
+const reverseOrder = ref(false)
+const loadingIndicator = { indicatorType: 'Shimmer' };
+const toolbarOptions = ['Search'];
+
+let loadedData = ref([]);
+
+onMounted(()=>{
+  fazerLogin(request);
 });
 
-async function auth(){
-  try {
-    const loggedIn = localStorage.getItem("SyncToken") !== null;
-    if(loggedIn) return;
+const fazerLogin = (request: CreateAccessTokenRequest) => {
+  authMutate({data:request});
+};
 
-    const authService = getAuthentication();
-    const response = await authService.autenticarOUsuário(request);
-
-    console.log(response);
-    if (response){
+const { mutate: authMutate, isPending: isAuthPending, isError: isAuthError, data : authData, error: authError} = useAutenticarOUsuario({
+  mutation: {
+    onSuccess: (response) => {
       localStorage.setItem("SyncToken", response.token);
+    },
+    onError: (error) => {
+      console.log("erro", error);
+      localStorage.removeItem("SyncToken");
     }
-  } catch (error) {
-    console.log("aaaaaa" + error);
   }
-}
-async function getAllPerson(token){
-  try {
+});
 
-    const personService = getPersons();
-    const getAllPersonRequestBuilder = {
-          PageNumber:  1,
-          PageSize: 1000,
-          SearchTerm: '',
-          SortColumn:  '',
-          ReverseOrder: false,
-          Enable: true
-      };
-    const response = await personService.listarPessoas(getAllPersonRequestBuilder);
-    if  (response){
-      data.value = response.items;
-      
-      pageSettings = {
-       
-        pageSize: response.pageSize
-      }
-    }
-    console.log("pessoaaa" + data);
-  } catch (error) {
-     console.log("bbbbb" + error);
-  }
-}
-    
+const { data: pessoasFiltradas, isLoading: isLoadingFiltradas } = useListarPessoas({
+        PageNumber: pageNumber.value,
+        PageSize: parseInt(pageSize.value),
+        SearchTerm: searchTerm.value,
+        SortColumn: sortColumn.value,
+        ReverseOrder: reverseOrder.value,
+        Enable: true
+    },
+    // {
+    //     query: {
+    //         refetchInterval: 5000,
+    //     }
+    // }
+    )
+const onPageChange = (args) => {
+  pageNumber.value = args.currentPage
+  pageSize.value = args.pageSize
 
-  const footerSum = ()=> {
-    return  { template : Vue.component('sumTemplate', {
-        template: `<span>Sum: {{data.Sum}}</span>`,
-        data () {return { data: {data: {}}};}
-        })
-      }
+}
+
+const onSort = (args) => {
+  sortColumn.value = args.columnName
+  reverseOrder.value = args.direction === 'descending'
+}
+
+const onSearch = (term) => {
+  searchTerm.value = term
+  // pageNumber.value = 1 // Resetar para primeira página ao buscar
+}
+const onActionBegin = (args) => {
+  if (args.requestType === 'paging') {
+   
   }
-  provide('grid',  [Page, Sort, Filter, Group, Aggregate]);
+};
+
+  let pageSettings = ref({ pageSize: 25, pageSizes: [25, 50, 75, 100], pageCount: pessoasFiltradas?.value?.totalPages,  });
+  provide('grid',  [Page, Sort, Group, Aggregate, Toolbar, Search]);
 </script>
 <style>
  .teste{
-  width: 700px;
+  width: 900px;
   margin: auto;
  }
 </style>

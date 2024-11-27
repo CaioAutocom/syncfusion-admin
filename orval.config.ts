@@ -5,9 +5,9 @@ export default defineConfig({
         output: {
             mode: 'tags-split',
             mock: true,
-            target: './src/services/apiService.ts',
-            schemas: './src/interfaces/api',
-            client: 'axios',
+            target: './src/api/Identity.ts',
+            schemas: './src/interfaces/api/Identity',
+            client: 'vue-query',
             override: {
                 mutator: {
                   path: './src/api/api-interceptor.ts',

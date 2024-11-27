@@ -13,7 +13,7 @@ import {
 } from 'msw'
 import type {
   TokenResponse
-} from '../../interfaces/api'
+} from '../../interfaces/api/Identity'
 
 export const getAutenticarOUsuárioResponseMock = (overrideResponse: Partial< TokenResponse > = {}): TokenResponse => ({refreshToken: faker.helpers.arrayElement([faker.helpers.arrayElement([faker.string.alpha(20), null]), undefined]), refreshTokenExpiryTime: faker.helpers.arrayElement([`${faker.date.past().toISOString().split('.')[0]}Z`, undefined]), token: faker.helpers.arrayElement([faker.helpers.arrayElement([faker.string.alpha(20), null]), undefined]), ...overrideResponse})
 
@@ -45,4 +45,5 @@ export const getRefreshTokenMockHandler = (overrideResponse?: TokenResponse | ((
 }
 export const getAuthenticationMock = () => [
   getAutenticarOUsuárioMockHandler(),
-  getRefreshTokenMockHandler()]
+  getRefreshTokenMockHandler()
+]

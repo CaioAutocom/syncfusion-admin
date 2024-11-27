@@ -14,7 +14,7 @@ import {
 import type {
   PersonResponse,
   PersonResponseIPagedList
-} from '../../interfaces/api'
+} from '../../interfaces/api/Identity'
 
 export const getCriarPessoaResponseMock = (): string => (faker.word.sample())
 
@@ -113,4 +113,5 @@ export const getPersonsMock = () => [
   getObterPessoaPorCpfCnpjMockHandler(),
   getListarPessoasMockHandler(),
   getAtualizarPessoaMockHandler(),
-  getDeletarPessoaMockHandler()]
+  getDeletarPessoaMockHandler()
+]
