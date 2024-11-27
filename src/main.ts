@@ -7,6 +7,8 @@ import { GridComponent, ColumnsDirective, ColumnDirective } from '@syncfusion/ej
 import { VueQueryPlugin } from '@tanstack/vue-query'
 
 import './lang';
+import { createPinia } from 'pinia';
+const pinia = createPinia()
 
 const app = (createApp(App));
 
@@ -16,5 +18,5 @@ app.component('e-column', ColumnDirective);
 app.use(GridPlugin);
 app.use(VueQueryPlugin)
 registerLicense(import.meta.env.VUE_APP_SYNCFUSION_LICENSE);
-
+app.use(pinia);
 app.mount('#app')

@@ -4,14 +4,14 @@
         <h1 v-if="isLoadingFiltradas">Carregando registros...</h1>
         <ejs-grid 
         :dataSource="pessoasFiltradas?.items" 
-        :allowPaging='true' 
-        :allowSorting='true' 
-        :allowGrouping='true' 
-        :pageSettings='pageSettings' 
+        :allowPaging='dataGridStore.gridConfig.allowPaging' 
+        :allowSorting='dataGridStore.gridConfig.allowSorting' 
+        :allowGrouping='dataGridStore.gridConfig.allowGrouping' 
+        :pageSettings='dataGridStore.pageSettings' 
         :actionBegin="onActionBegin"
         @sort='onSort'
-        :toolbar='toolbarOptions'
-        :loadingIndicator='loadingIndicator'
+        :toolbar='dataGridStore.gridConfig.toolbarOptions'
+        :loadingIndicator='dataGridStore.loadingIndicator'
         height="700">
           <e-columns>
             <e-column field='nome' headerText='Nome' width=200></e-column>
@@ -31,8 +31,10 @@ import { useQuery, useQueryClient } from "@tanstack/vue-query";
 import { useAutenticarOUsuario } from "../../src/api/authentication/authentication"
 import { useListarPessoas } from "../api/persons/persons"
 import { useApiRequest } from "../composables/useApiRequest"
+import {useDataGridStore} from "../stores/dataGridStore"
 
 const queryClient = useQueryClient();
+const dataGridStore = useDataGridStore();
 
 const request: CreateAccessTokenRequest = {
   email: "eduprog@gmail.com",
@@ -71,11 +73,11 @@ const { mutate: authMutate, isPending: isAuthPending, isError: isAuthError, data
 });
 
 const { data: pessoasFiltradas, isLoading: isLoadingFiltradas } = useListarPessoas({
-        PageNumber: pageNumber.value,
-        PageSize: parseInt(pageSize.value),
-        SearchTerm: searchTerm.value,
-        SortColumn: sortColumn.value,
-        ReverseOrder: reverseOrder.value,
+        PageNumber: dataGridStore.pageNumber,
+        PageSize: dataGridStore.pageSize,
+        SearchTerm: dataGridStore.searchTerm,
+        SortColumn: dataGridStore.sortColumn,
+        ReverseOrder: dataGridStore.reverseOrder,
         Enable: true
     },
     // {
@@ -105,8 +107,8 @@ const onActionBegin = (args) => {
   }
 };
 
-  let pageSettings = ref({ pageSize: 25, pageSizes: [25, 50, 75, 100], pageCount: pessoasFiltradas?.value?.totalPages,  });
-  provide('grid',  [Page, Sort, Group, Aggregate, Toolbar, Search]);
+  
+provide('grid',  [Page, Sort, Group, Aggregate, Toolbar, Search]);
 </script>
 <style>
  .teste{
