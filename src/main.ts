@@ -11,12 +11,12 @@ import { createPinia } from 'pinia';
 const pinia = createPinia()
 
 const app = (createApp(App));
-
+app.use(pinia);
 app.component('ejs-grid', GridComponent);
 app.component('e-columns', ColumnsDirective);
 app.component('e-column', ColumnDirective);
 app.use(GridPlugin);
 app.use(VueQueryPlugin)
 registerLicense(import.meta.env.VUE_APP_SYNCFUSION_LICENSE);
-app.use(pinia);
+
 app.mount('#app')

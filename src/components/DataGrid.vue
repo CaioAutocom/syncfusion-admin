@@ -1,17 +1,17 @@
 <template>
     <div id="app" class="teste">
-        <h1 v-if="isAuthPending">Autenticando...</h1>
-        <h1 v-if="isLoadingFiltradas">Carregando registros...</h1>
+        <!-- <h1 v-if="isAuthPending">Autenticando...</h1> -->
+        <h1 v-if="isLoading">Carregando registros...</h1>
         <ejs-grid 
-        :dataSource="pessoasFiltradas?.items" 
-        :allowPaging='dataGridStore.gridConfig.allowPaging' 
-        :allowSorting='dataGridStore.gridConfig.allowSorting' 
-        :allowGrouping='dataGridStore.gridConfig.allowGrouping' 
-        :pageSettings='dataGridStore.pageSettings' 
+        :dataSource="data?.data" 
+        :allowPaging='dataGridStore?.gridConfig?.allowPaging' 
+        :allowSorting='dataGridStore?.gridConfig?.allowSorting' 
+        :allowGrouping='dataGridStore?.gridConfig?.allowGrouping' 
+        :pageSettings='dataGridStore?.pageSettings' 
         :actionBegin="onActionBegin"
         @sort='onSort'
-        :toolbar='dataGridStore.gridConfig.toolbarOptions'
-        :loadingIndicator='dataGridStore.loadingIndicator'
+        :toolbar='dataGridStore?.gridConfig?.toolbarOptions'
+        :loadingIndicator='dataGridStore?.loadingIndicator'
         height="700">
           <e-columns>
             <e-column field='nome' headerText='Nome' width=200></e-column>
@@ -27,78 +27,49 @@
 import { onMounted, provide, ref, watch } from "vue";
 import { GridComponent as EjsGrid, ColumnDirective as EColumn, ColumnsDirective as EColumns, AggregateDirective as EAggregate, AggregatesDirective as EAggregates, Page, Sort, Filter, Group, Aggregate, Toolbar, Search } from "@syncfusion/ej2-vue-grids";
 import { CreateAccessTokenRequest } from "../interfaces/api/Identity";
-import { useQuery, useQueryClient } from "@tanstack/vue-query";
 import { useAutenticarOUsuario } from "../../src/api/authentication/authentication"
-import { useListarPessoas } from "../api/persons/persons"
-import { useApiRequest } from "../composables/useApiRequest"
 import {useDataGridStore} from "../stores/dataGridStore"
+import { useAuthMutation} from "../api/hooks/useAuthMutation";
+import {useListarPessoasQuery} from "../api/hooks/useListarPessoasQuery";
+import { QueryClient, useQueryClient } from "@tanstack/vue-query";
+import { listarPessoas } from "../api/persons/persons";
 
 const queryClient = useQueryClient();
 const dataGridStore = useDataGridStore();
 
-const request: CreateAccessTokenRequest = {
-  email: "eduprog@gmail.com",
-  password: "123Pa$$word!",
-  tenantId: "eduprog",
-};
 
-const pageNumber = ref(1)
-const pageSize = ref('500')
-const searchTerm = ref('')
-const sortColumn = ref('')
-const reverseOrder = ref(false)
-const loadingIndicator = { indicatorType: 'Shimmer' };
-const toolbarOptions = ['Search'];
+const { authMutate } = useAuthMutation(); 
 
-let loadedData = ref([]);
+const credentials: CreateAccessTokenRequest = {
+    email: "eduprog@gmail.com",
+    password: "123Pa$$word!",
+    tenantId: "eduprog",
+  };
 
-onMounted(()=>{
-  fazerLogin(request);
+onMounted(() => {
+  fazerLogin(credentials);
+  const { data, isLoading} = useListarPessoasQuery();
 });
 
 const fazerLogin = (request: CreateAccessTokenRequest) => {
-  authMutate({data:request});
+  authMutate({data: credentials});
 };
 
-const { mutate: authMutate, isPending: isAuthPending, isError: isAuthError, data : authData, error: authError} = useAutenticarOUsuario({
-  mutation: {
-    onSuccess: (response) => {
-      localStorage.setItem("SyncToken", response.token);
-    },
-    onError: (error) => {
-      console.log("erro", error);
-      localStorage.removeItem("SyncToken");
-    }
-  }
-});
 
-const { data: pessoasFiltradas, isLoading: isLoadingFiltradas } = useListarPessoas({
-        PageNumber: dataGridStore.pageNumber,
-        PageSize: dataGridStore.pageSize,
-        SearchTerm: dataGridStore.searchTerm,
-        SortColumn: dataGridStore.sortColumn,
-        ReverseOrder: dataGridStore.reverseOrder,
-        Enable: true
-    },
-    // {
-    //     query: {
-    //         refetchInterval: 5000,
-    //     }
-    // }
-    )
+
 const onPageChange = (args) => {
-  pageNumber.value = args.currentPage
-  pageSize.value = args.pageSize
+  dataGridStore.pageNumber = args.currentPage
+  dataGridStore.pageSize = args.pageSize
 
 }
 
 const onSort = (args) => {
-  sortColumn.value = args.columnName
-  reverseOrder.value = args.direction === 'descending'
+  dataGridStore.sortColumn = args.columnName
+  dataGridStore.reverseOrder = args.direction === 'descending'
 }
 
 const onSearch = (term) => {
-  searchTerm.value = term
+  dataGridStore.searchTerm = term
   // pageNumber.value = 1 // Resetar para primeira página ao buscar
 }
 const onActionBegin = (args) => {
