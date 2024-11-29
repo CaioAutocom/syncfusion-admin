@@ -1,6 +1,5 @@
 import { useQuery } from "@tanstack/vue-query";
 import { useListarPessoas } from "../persons/persons";
-import { useAuthStore } from "../../stores/authStore";
 
 export function useListarPessoasQuery(){
     const query = useQuery({
