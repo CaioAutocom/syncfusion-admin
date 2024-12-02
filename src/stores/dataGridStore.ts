@@ -4,12 +4,12 @@ import { ListarPessoasParams } from '../interfaces/api/Identity';
 export const useDataGridStore = defineStore('dataGridStore', {
     state: () => ({
         paginationRequest: {
-            pageNumber: 1,
-            pageSize: 15,
-            searchTerm: '',
-            sortColumn: '',
-            reverseOrder: false,
-            enable: true
+            PageNumber: 1,
+            PageSize: 15,
+            SearchTerm: '',
+            SortColumn: '',
+            ReverseOrder: false,
+            Enable: true
           } as ListarPessoasParams,
     }),
     actions: {

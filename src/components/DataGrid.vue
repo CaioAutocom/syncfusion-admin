@@ -1,14 +1,16 @@
 <template>
     <div id="app" class="teste">
       <ejs-grid 
+        ref="grid"
+        id="PagingGrid"
         :dataSource="pessoasData?.items" 
-        :allowPaging='dataGridStore?.gridConfig?.allowPaging' 
-        :allowSorting='dataGridStore?.gridConfig?.allowSorting' 
-        :allowGrouping='dataGridStore?.gridConfig?.allowGrouping' 
-        :pageSettings='dataGridStore?.pageSettings' 
-        :toolbar='dataGridStore?.gridConfig?.toolbarOptions'
-        :loadingIndicator='dataGridStore?.loadingIndicator'
-        height="700">
+        :allowPaging='true' 
+        :allowSorting='true' 
+        :allowGrouping='true' 
+        :pageSettings='pageSettings' 
+        :toolbar='true'
+        :actionBegin="onActionBegin"
+        height="700">     
           <e-columns>
             <e-column field='nome' headerText='Nome' width=200></e-column>
             <e-column field='apelido' headerText='Apelido' width=120></e-column>
@@ -33,9 +35,22 @@ import { useQueryClient } from "@tanstack/vue-query";
 
 const queryClient = useQueryClient();
 const dataGridStore = useDataGridStore();
-
+const pageSettings = { 
+  pageSizes: ['25', '50','75', 'Todas'], 
+  pageSize: dataGridStore.paginationRequest.PageSize, 
+   };
 
 const {data: pessoasData, isSuccess}  = useListarPessoas(dataGridStore.paginationRequest);
+const grid = ref(null);
+
+
+const onActionBegin = (args) => {
+  if (args.requestType === 'paging') {
+    dataGridStore.setPageSize(args.pageSize);
+    dataGridStore.setPageNumber(args.currentPage);
+    // grid.value.ej2Instances.pageSettings.pageCount = 17;
+  }
+};
 
 
 provide('grid',  [Page, Sort, Group, Aggregate, Toolbar, Search]);
