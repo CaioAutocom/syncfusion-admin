@@ -1,29 +1,32 @@
 import { defineStore } from 'pinia';
+import { ListarPessoasParams } from '../interfaces/api/Identity';
 
 export const useDataGridStore = defineStore('dataGridStore', {
     state: () => ({
-        pageNumber: 1,
-        pageSize: 10,
-        searchTerm: '',
-        sortColumn: '',
-        reverseOrder: false,
-        enable: true
+        paginationRequest: {
+            pageNumber: 1,
+            pageSize: 15,
+            searchTerm: '',
+            sortColumn: '',
+            reverseOrder: false,
+            enable: true
+          } as ListarPessoasParams,
     }),
     actions: {
         setPageNumber(page: number) {
-            this.pageNumber = page;
+            this.paginationRequest.PageNumber = page;
         },
         setPageSize(size: number) {
-            this.pageSize = size;
+            this.paginationRequest.PageSize = size;
         },
         setSearchTerm(term: string) {
-            this.searchTerm = term;
+            this.paginationRequest.SearchTerm = term;
         },
         setSortColumn(column: string) {
-            this.sortColumn = column;
+            this.paginationRequest.SortColumn = column;
         },
         setReverseOrder(reverse: boolean) {
-            this.reverseOrder = reverse;
+            this.paginationRequest.ReverseOrder = reverse;
         },
     },
 });
