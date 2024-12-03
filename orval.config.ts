@@ -17,7 +17,6 @@ export default defineConfig({
         },
         input: {
             target: './src/api/swagger.json'
-        },
-        generateEachHttpStatus: true
+        }
     }
 });

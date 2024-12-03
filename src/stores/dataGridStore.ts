@@ -5,7 +5,7 @@ export const useDataGridStore = defineStore('dataGridStore', {
     state: () => ({
         paginationRequest: {
             PageNumber: 1,
-            PageSize: 15,
+            PageSize: 25,
             SearchTerm: '',
             SortColumn: '',
             ReverseOrder: false,
@@ -16,7 +16,7 @@ export const useDataGridStore = defineStore('dataGridStore', {
         setPageNumber(page: number) {
             this.paginationRequest.PageNumber = page;
         },
-        setPageSize(size: number) {
+        setPageSize(size: number | undefined) {
             this.paginationRequest.PageSize = size;
         },
         setSearchTerm(term: string) {
